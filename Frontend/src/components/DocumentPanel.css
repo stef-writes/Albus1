@@ -1,0 +1,234 @@
+.document-panel {
+  position: fixed;
+  top: 0;
+  right: -500px; /* Start off-screen with wider default width */
+  width: 500px; /* Increased default width */
+  height: 100vh;
+  background: white;
+  box-shadow: -3px 0 15px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.document-panel.open {
+  right: 0; /* Slide in */
+}
+
+/* Improve the resize handle styling */
+.resize-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px; /* Slightly wider */
+  height: 100%;
+  cursor: col-resize;
+  background-color: #e1e1e1;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+}
+
+.resize-handle:hover, 
+.resize-handle:active {
+  background-color: #3182ce;
+}
+
+.document-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 15px; /* Reduced padding */
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.document-panel-header h3 {
+  margin: 0;
+  font-size: 16px; /* Smaller font */
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0 5px;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.document-tabs {
+  display: flex;
+  overflow-x: auto;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 0 2px; /* Reduced padding */
+  height: 32px; /* Fixed height for tabs */
+}
+
+.document-tab {
+  padding: 6px 12px; /* Reduced padding */
+  border: none;
+  background: none;
+  border-right: 1px solid #ddd;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px; /* Narrower tabs */
+  color: #555;
+  font-size: 13px; /* Smaller font */
+}
+
+.document-tab.active {
+  background: white;
+  color: #3182ce;
+  border-bottom: 2px solid #3182ce;
+}
+
+.add-document-button {
+  padding: 4px 10px; /* Reduced padding */
+  background: none;
+  border: none;
+  font-size: 16px; /* Slightly smaller */
+  cursor: pointer;
+  color: #666;
+}
+
+.add-document-button:hover {
+  color: #3182ce;
+}
+
+.document-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px; /* Further reduced top/bottom padding */
+  overflow: hidden;
+}
+
+.document-name-input {
+  margin-bottom: 0; /* Remove bottom margin since we use the toolbox container margin */
+  flex: 1; /* Take up half the space */
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.document-editor {
+  flex: 1;
+  padding: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  min-height: calc(100% - 40px); /* Ensures it fills the space minus the header height */
+}
+
+.document-footer {
+  padding: 8px 15px; /* Reduced padding */
+  background: #f5f5f5;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-button {
+  padding: 6px 12px; /* Reduced padding */
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px; /* Smaller font */
+}
+
+.save-button:hover {
+  background: #2c5282;
+}
+
+/* Document toolbox container for name and search */
+.document-toolbox {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Search container */
+.search-container {
+  flex: 1; /* Take up half the space */
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.search-results-count {
+  position: absolute;
+  right: 8px;
+  font-size: 12px;
+  color: #666;
+  pointer-events: none;
+}
+
+/* Search results panel */
+.search-results {
+  margin-top: 8px;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.search-result-item {
+  padding: 4px 8px;
+  border-bottom: 1px solid #eee;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-match {
+  background-color: #ffeb3b;
+  font-weight: bold;
+}
+
+.search-context {
+  color: #666;
+}
+
+.search-more {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 4px;
+  font-size: 12px;
+} 

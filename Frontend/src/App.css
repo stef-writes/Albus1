@@ -1,0 +1,327 @@
+/* Reset/Base Styles */
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Ensure the root element takes up height if needed */
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Style for the main React Flow container */
+.reactflow-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-background);
+  position: relative;
+}
+
+/* Grid background */
+.react-flow__background-pattern {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+}
+
+/* Add node button */
+.add-node-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  margin-right: 10px;
+}
+
+.add-node-button:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Execute flow button */
+.execute-flow-button {
+  background-color: var(--color-success);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  margin-right: 10px;
+}
+
+.execute-flow-button:hover {
+  background-color: var(--color-success-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Override react-flow's default node selection style */
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+/* Override react-flow's default edge style */
+.react-flow__edge-path {
+  stroke: var(--color-foreground);
+  stroke-width: 1.5;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+}
+
+/* Override react-flow's connection line */
+.react-flow__connection-path {
+  stroke: var(--color-primary);
+  stroke-width: 1.5;
+  stroke-dasharray: 5, 5;
+}
+
+/* Controls panel */
+.react-flow__controls {
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.react-flow__controls-button {
+  background-color: var(--color-surface);
+  border: none;
+  color: var(--color-foreground);
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  margin: 5px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.react-flow__controls-button:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-primary);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+/* Basic App Styling */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 90vh; /* Use viewport height */
+  max-width: 700px;
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow: hidden; /* Prevent content spillover */
+}
+
+h1 {
+  padding: 15px 20px;
+  margin: 0;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #eee;
+  font-size: 1.2em;
+}
+
+.chat-window {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto; /* Enable scrolling for messages */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between messages */
+  background-color: #fff;
+}
+
+.message {
+  padding: 10px 15px;
+  border-radius: 18px;
+  max-width: 80%;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.message.user {
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end; /* Align user messages to the right */
+  margin-left: auto; /* Push to the right */
+}
+
+.message.assistant {
+  background-color: #e9ecef;
+  color: #333;
+  align-self: flex-start; /* Align assistant messages to the left */
+  margin-right: auto; /* Push to the left */
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  align-self: stretch; /* Take full width */
+  text-align: left;
+}
+
+.input-area {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid #eee;
+  background-color: #f7f7f7;
+}
+
+.input-area input {
+  flex-grow: 1;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  margin-right: 10px;
+  font-size: 1em;
+}
+
+.input-area button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease;
+}
+
+.input-area button:hover {
+  background-color: #0056b3;
+}
+
+.input-area button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Basic Markdown Styling */
+.message.assistant p {
+  margin: 0.5em 0; /* Add some spacing between paragraphs */
+}
+
+.message.assistant ul,
+.message.assistant ol {
+  padding-left: 20px;
+  margin: 0.5em 0;
+}
+
+.message.assistant li {
+  margin-bottom: 0.25em;
+}
+
+.message.assistant code {
+  background-color: rgba(0, 0, 0, 0.08);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: monospace;
+}
+
+.message.assistant pre {
+  background-color: rgba(0, 0, 0, 0.08);
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto; /* Allow horizontal scrolling for wide code blocks */
+  margin: 0.5em 0;
+}
+
+.message.assistant pre code {
+  background-color: transparent; /* Reset background for code inside pre */
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.message.assistant blockquote {
+  border-left: 3px solid #ccc;
+  padding-left: 10px;
+  margin: 0.5em 0;
+  color: #555;
+}
+
+.message.assistant table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: auto;
+}
+
+.message.assistant th,
+.message.assistant td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.message.assistant th {
+  background-color: #f0f0f0;
+}
+
+/* Remove default Vite styles if you don't need them */
+/* You might want to keep some base styles or normalize.css */
+/* .logo { height: 6em; padding: 1.5em; will-change: filter; transition: filter 300ms; }
+.logo:hover { filter: drop-shadow(0 0 2em #646cffaa); }
+.logo.react:hover { filter: drop-shadow(0 0 2em #61dafbaa); }
+@keyframes logo-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: no-preference) { a:nth-of-type(2) .logo { animation: logo-spin infinite 20s linear; } }
+.card { padding: 2em; }
+.read-the-docs { color: #888; } */
+
+.document-button {
+  padding: 8px 12px;
+  margin-left: 10px;
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.document-button:hover {
+  background-color: #2c5282;
+}
+
+.document-button.active {
+  background-color: #e53e3e;
+}
+
+.document-button.active:hover {
+  background-color: #c53030;
+}
+
+/* Always keep the react-flow content visible behind the panel */
+.reactflow-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}

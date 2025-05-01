@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+openai
+networkx # For graph operations 
+pymongo # MongoDB driver
+motor # Async MongoDB driver for FastAPI 
