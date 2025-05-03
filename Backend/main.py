@@ -130,7 +130,7 @@ class Node:
         self.token_usage = None         # To store token usage from the process method
         self.template = template        # Optional template configuration for the node
 
-    def process(self, inputs):
+    async def process(self, inputs):
         """Processes input data based on node type. Calls specific AI functions."""
         print(f"--- Processing Node: {self.node_id} ({self.node_type}) ---")
         result = None
@@ -178,6 +178,17 @@ class Node:
                  print(f"Error updating token tracker: {e}")
 
         print(f"--- Finished Node: {self.node_id} ---")
+        
+        # Save the node's output to the database
+        if result is not None:
+            try:
+                # Ensure the result is serializable (e.g., convert complex objects if needed)
+                # For now, assume result is a dict or basic type
+                await update_node(self.node_id, result) 
+                print(f"Saved output for node {self.node_id} to database.")
+            except Exception as e:
+                print(f"Error saving node {self.node_id} output to database: {e}")
+
         return result
     
     def _apply_template(self, inputs):
@@ -469,7 +480,7 @@ class ScriptChain:
                         print(f"Clearing stored results for dependent node {dependent_node_id}")
                         self.storage.data[dependent_node_id] = {}
 
-    def execute(self):
+    async def execute(self):
         """Executes the graph nodes in topological (dependency) order."""
         try:
             # Calculate the order nodes must run based on edges
@@ -568,10 +579,11 @@ class ScriptChain:
 
             # --- Process the Node --- 
             try:
-                node_result = node_instance.process(inputs_for_node)
+                # Call the now async process method
+                node_result = await node_instance.process(inputs_for_node) 
             except Exception as e:
                 print(f"Error processing node {node_id}: {e}")
-                # Store error and continue
+                node_result = None # Indicate failure
                 results[node_id] = {"error": str(e)}
                 self.storage.store(node_id, {"error": str(e)})
                 continue  # Skip storing result and callbacks for this failed node
