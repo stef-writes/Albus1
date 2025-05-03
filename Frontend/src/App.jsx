@@ -20,8 +20,9 @@ import './App.css';
 // Import custom node types
 import nodeTypes from './components/CustomNodeTypes';
 
-// Import NodeService for API calls
-import NodeService from './services/NodeService';
+// Import API service functions
+import { searchNodes, getNodeDetails, updateNodeName } from './services/api'; // Import getNodeDetails and updateNodeName
+import NodeService from './services/NodeService'; // Keep NodeService for other calls
 
 // Import our components
 import Node from './components/Node';
@@ -55,6 +56,51 @@ function Flow() {
       content: '' 
     };
     setDocuments([...documents, newDoc]);
+  };
+
+  // Handle selecting a node from search results
+  const handleNodeSelect = async (nodeId) => {
+    console.log(`Node selected from search: ${nodeId}`);
+    try {
+      const nodeDetails = await getNodeDetails(nodeId);
+      if (nodeDetails) {
+        console.log('Fetched node details:', nodeDetails);
+        // Check if a document for this node already exists
+        const existingDocIndex = documents.findIndex(doc => doc.id === nodeId);
+        const nodeContent = nodeDetails.output || ''; // Use output field, default to empty
+
+        if (existingDocIndex !== -1) {
+          // Update existing document
+          setDocuments(docs => 
+            docs.map((doc, index) => 
+              index === existingDocIndex ? { ...doc, name: nodeDetails.node_id, content: nodeContent } : doc
+            )
+          );
+          console.log(`Updated existing document for node: ${nodeId}`);
+        } else {
+          // Add new document
+          const newDocFromNode = { 
+            id: nodeId, // Use nodeId as the document ID
+            name: nodeDetails.node_id, 
+            content: nodeContent
+          };
+          setDocuments(docs => [...docs, newDocFromNode]);
+          console.log(`Added new document for node: ${nodeId}`);
+        }
+
+        // TODO: Optionally set this new/updated doc as active in DocumentPanel
+
+        // Ensure panel is open
+        setIsDocumentPanelOpen(true);
+
+      } else {
+        console.warn(`Could not find details for node: ${nodeId}`);
+        // Handle node not found (e.g., show a message)
+      }
+    } catch (error) {
+      console.error(`Error handling node selection for ${nodeId}:`, error);
+      // Handle error (e.g., show a message)
+    }
   };
 
   // Handler for node changes (drag, select, remove)
@@ -155,7 +201,7 @@ function Flow() {
           output: '',
           variables: [],
           onNameChange: (name) => {
-            // Update node name
+            // Update node name in local React state
             setNodes((nds) =>
               nds.map((node) => {
                 if (node.id === id) {
@@ -171,7 +217,7 @@ function Flow() {
               })
             );
             
-            // Update node name in other nodes' variables
+            // Update node name in other nodes' variable lists (local state)
             setNodes((nds) =>
               nds.map((node) => {
                 if (node.id !== id && node.data.variables) {
@@ -196,6 +242,17 @@ function Flow() {
                 return node;
               })
             );
+            
+            // --- Call backend to update name in database --- 
+            updateNodeName(id, name).then(success => {
+              if (success) {
+                console.log(`Successfully updated node ${id} name to "${name}" in database.`);
+              } else {
+                console.error(`Failed to update node ${id} name in database.`);
+                // Optionally: Add user feedback or rollback logic here
+              }
+            });
+            // --- End backend call --- 
           },
           onPromptChange: (prompt) => {
             setNodes((nds) =>

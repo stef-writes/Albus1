@@ -11,7 +11,7 @@ from contextlib import contextmanager # Added for context manager
 import networkx as nx # Added import for graph operations
 import re # Added for regex pattern matching
 import json # Added for JSON parsing
-from database import save_node, get_node, save_chain, get_chain, get_all_chains, get_all_nodes, update_node, delete_node
+from database import save_node, get_node, save_chain, get_chain, get_all_chains, get_all_nodes, update_node, delete_node, update_node_name
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,       
     allow_credentials=True,     
-    allow_methods=["GET", "POST", "OPTIONS"], 
+    allow_methods=["GET", "POST", "OPTIONS", "PUT"], 
     allow_headers=["*"],          
 )
 
@@ -1241,7 +1241,7 @@ def read_root():
 
 @app.post("/add_node", status_code=201)
 async def add_node_api(node: NodeInput, session_id: str = "default"):
-    """Adds a node to the script chain via API."""
+    """Adds a node to the script chain via API and saves it to the database."""
     script_chain = get_script_chain(session_id)
     llm_config_for_node = default_llm_config
     # Use the renamed field 'llm_config' here
@@ -1261,11 +1261,29 @@ async def add_node_api(node: NodeInput, session_id: str = "default"):
             output_keys=node.output_keys,
             model_config=llm_config_for_node # This maps to the Node class __init__ param
         )
-        print(f"Added node: {node.node_id} for session {session_id}")
-        return {"message": f"Node '{node.node_id}' added successfully."}
-    except Exception as e:
-        print(f"Error adding node {node.node_id}: {e}")
-        raise HTTPException(status_code=400, detail=f"Failed to add node: {str(e)}")
+        print(f"Added node: {node.node_id} to in-memory chain for session {session_id}")
+        
+        # --- Add node to the database --- 
+        try:
+            node_db_data = {
+                "node_id": node.node_id,
+                "node_type": node.node_type,
+                "input_keys": node.input_keys,
+                "output_keys": node.output_keys,
+                "output": None, # Initialize output as None
+                "name": node.node_id # Use node_id as the initial default name
+            }
+            await save_node(node_db_data) # Save basic node info to MongoDB
+            print(f"Saved node: {node.node_id} to database with initial name.")
+            return {"message": f"Node '{node.node_id}' added successfully to chain and database."}
+        except Exception as db_e:
+            print(f"Error saving node {node.node_id} to database: {db_e}")
+            # Note: Node is added to memory chain but not DB. Consider if rollback is needed.
+            raise HTTPException(status_code=500, detail=f"Node added to chain but failed to save to database: {str(db_e)}")
+            
+    except Exception as chain_e:
+        print(f"Error adding node {node.node_id} to chain: {chain_e}")
+        raise HTTPException(status_code=400, detail=f"Failed to add node to chain: {str(chain_e)}")
 
 @app.post("/add_edge", status_code=201)
 async def add_edge_api(edge: EdgeInput, session_id: str = "default"):
@@ -1757,9 +1775,9 @@ async def remove_node(node_id: str):
     return {"message": "Node deleted successfully"}
 
 @app.get("/nodes/")
-async def list_nodes():
-    """List all nodes"""
-    nodes = await get_all_nodes()
+async def list_nodes(q: Optional[str] = None): # Add optional query parameter 'q'
+    """List all nodes, optionally filtering by name (node_id) via query param 'q'."""
+    nodes = await get_all_nodes(name_query=q) # Pass the query to the database function
     return nodes
 
 @app.post("/chains/")
@@ -1781,6 +1799,19 @@ async def list_chains():
     """List all chains"""
     chains = await get_all_chains()
     return chains
+
+# --- Endpoint to Update Node Name --- 
+class NodeNameUpdate(BaseModel):
+    name: str
+
+@app.put("/nodes/{node_id}/name")
+async def update_node_name_api(node_id: str, update_data: NodeNameUpdate):
+    """Update the name of a node."""
+    success = await update_node_name(node_id, update_data.name)
+    if not success:
+        raise HTTPException(status_code=404, detail="Node not found or name could not be updated")
+    return {"message": f"Node '{node_id}' name updated successfully to '{update_data.name}'"}
+# --- End Endpoint --- 
 
 # --- Run Server --- (Existing code)
 if __name__ == "__main__":

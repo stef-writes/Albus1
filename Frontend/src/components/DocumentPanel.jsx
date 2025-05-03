@@ -1,16 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './DocumentPanel.css';
+// Import the API service
+import { searchNodes, getNodeDetails } from '../services/api'; 
 
-const DocumentPanel = ({ isOpen, onClose, documents = [], onDocumentSave, onAddDocument }) => {
+const DocumentPanel = ({ 
+  isOpen, 
+  onClose, 
+  documents = [], 
+  onDocumentSave, 
+  onAddDocument,
+  // onNodeSelect // Remove unused prop
+}) => {
   const [activeDocIndex, setActiveDocIndex] = useState(0);
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  // const [searchResults, setSearchResults] = useState([]); // Remove old search results state
+  const [nodeSearchResults, setNodeSearchResults] = useState([]); // State for backend node search results
+  const [isSearching, setIsSearching] = useState(false); // State to show loading indicator
   const [panelWidth, setPanelWidth] = useState(500); // Default width
   const panelRef = useRef(null);
   const resizeStartX = useRef(null);
   const initialWidth = useRef(null);
+  const textareaRef = useRef(null); // Add ref for the textarea
 
   // Initialize with first document or empty state
   useEffect(() => {
@@ -43,40 +55,70 @@ const DocumentPanel = ({ isOpen, onClose, documents = [], onDocumentSave, onAddD
     setActiveDocIndex(index);
   };
 
-  // Search functionality
-  const handleSearch = (e) => {
+  // --- Modified Search Functionality (Placeholder for API call) ---
+  const handleSearch = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    
+    setNodeSearchResults([]); // Clear previous results
+
     if (!query.trim()) {
-      setSearchResults([]);
-      return;
+      return; // Don't search if query is empty
     }
-    
-    // Basic search through the current document
-    const searchTermLower = query.toLowerCase();
-    if (content) {
-      const contentLower = content.toLowerCase();
-      const results = [];
-      let startIndex = 0;
+
+    setIsSearching(true);
+    try {
+      // --- Use the actual API call --- 
+      console.log(`Searching for nodes with query: ${query}`);
+      const results = await searchNodes(query); 
+      setNodeSearchResults(results); 
+      console.log('Actual search results:', results);
+      // --- End of API call section ---
       
-      // Find all occurrences
-      while (startIndex < contentLower.length) {
-        const foundIndex = contentLower.indexOf(searchTermLower, startIndex);
-        if (foundIndex === -1) break;
+    } catch (error) {
+      console.error("Error searching nodes:", error);
+      setNodeSearchResults([]); // Clear results on error
+    } finally {
+      setIsSearching(false);
+    }
+  };
+  
+  // Function to handle clicking the 'Insert Output' button
+  const handleInsertOutput = async (nodeId) => {
+    console.log("Insert output requested for node:", nodeId);
+    try {
+      const nodeDetails = await getNodeDetails(nodeId);
+      if (nodeDetails && typeof nodeDetails.output !== 'undefined') {
+        const outputToInsert = String(nodeDetails.output); // Ensure it's a string
         
-        results.push({
-          index: foundIndex,
-          text: content.substring(foundIndex, foundIndex + query.length),
-          beforeContext: content.substring(Math.max(0, foundIndex - 20), foundIndex),
-          afterContext: content.substring(foundIndex + query.length, Math.min(content.length, foundIndex + query.length + 20))
-        });
-        
-        startIndex = foundIndex + 1;
+        if (textareaRef.current) {
+          const textarea = textareaRef.current;
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          
+          // Insert the text at the cursor position
+          const currentContent = content;
+          const newContent = currentContent.substring(0, start) + outputToInsert + currentContent.substring(end);
+          setContent(newContent);
+          
+          // Optional: Move cursor to the end of the inserted text
+          // Needs to be done slightly deferred after state update
+          setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start + outputToInsert.length, start + outputToInsert.length);
+          }, 0);
+          
+          console.log(`Inserted output from ${nodeId}`);
+        }
+      } else {
+        console.warn(`Node ${nodeId} not found or has no output.`);
+        // Maybe show a small notification to the user
       }
-      
-      setSearchResults(results);
+    } catch (error) {
+      console.error("Error fetching node details for insertion:", error);
     }
+    // Clear search after attempting insertion
+    setSearchQuery(''); 
+    setNodeSearchResults([]);
   };
 
   // Start resizing the panel
@@ -169,35 +211,44 @@ const DocumentPanel = ({ isOpen, onClose, documents = [], onDocumentSave, onAddD
               className="search-input"
               value={searchQuery}
               onChange={handleSearch}
-              placeholder="Search..."
+              placeholder="Search Nodes..." // Update placeholder
             />
             {searchQuery && (
               <span className="search-results-count">
-                {searchResults.length} {searchResults.length === 1 ? 'result' : 'results'}
+                {isSearching ? 'Searching...' : 
+                 `${nodeSearchResults.length} ${nodeSearchResults.length === 1 ? 'result' : 'results'}`}
               </span>
             )}
           </div>
         </div>
         
         <textarea
+          ref={textareaRef} // Add ref to textarea
           className="document-editor"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Start typing your document here..."
         />
         
-        {searchResults.length > 0 && (
-          <div className="search-results">
-            {searchResults.slice(0, 5).map((result, index) => (
-              <div key={index} className="search-result-item">
-                <span className="search-context">{result.beforeContext}</span>
-                <span className="search-match">{result.text}</span>
-                <span className="search-context">{result.afterContext}</span>
+        {/* Display Node Search Results */} 
+        {nodeSearchResults.length > 0 && (
+          <div className="search-results node-search-results"> {/* Add class for specific styling */}
+            {nodeSearchResults.map((node) => (
+              <div 
+                key={node._id || node.node_id} // Use _id if available, fallback to node_id
+                className="search-result-item node-result-item" 
+              >
+                {/* Display node_id as the result */} 
+                {node.node_id} 
+                <button 
+                  className="insert-output-button"
+                  onClick={() => handleInsertOutput(node.node_id)} // Call insert handler
+                  title={`Insert output of ${node.node_id}`}
+                >
+                  Insert
+                </button>
               </div>
             ))}
-            {searchResults.length > 5 && (
-              <div className="search-more">+ {searchResults.length - 5} more matches</div>
-            )}
           </div>
         )}
       </div>
