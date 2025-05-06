@@ -1188,7 +1188,8 @@ class TemplateProcessor:
                 else:
                     # Keep the original template marker if not resolved
                     self.log(f"  Could not resolve reference: {template_marker}")
-                    new_processed_prompt += template_marker
+                    error_message = f"[CONTEXT_ERROR: Content for '{node_name_ref}' not found in provided context_data]"
+                    new_processed_prompt += error_message
                     
                 last_end = end
             
