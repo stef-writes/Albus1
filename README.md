@@ -1,27 +1,55 @@
-# Albus
+# Albus - AI Workflow Orchestration Tool
 
-A powerful node-based AI workflow tool with a friendly UI.
+Albus is a powerful, node-based AI workflow tool designed to help you create, visualize, and execute complex AI processing chains with a user-friendly interface. It allows for modular construction of AI tasks, making it easier to experiment with and deploy sophisticated AI pipelines.
 
-## Features
+## Project Structure
 
-- Interactive node graph for AI workflows
-- Document editing panel that slides in from the side
-- MongoDB integration for persistent storage
-- Real-time search functionality
+The project is organized into two main components:
 
-## Structure
+*   **`Frontend/`**: Contains the React-based user interface. Users interact with this part to build and manage their AI workflows. It utilizes Vite for a fast development experience and React Flow for the graph visualization.
+*   **`Backend/`**: A FastAPI server that powers the AI graph execution engine. It handles node processing, LLM interactions, context management between nodes, and data persistence using MongoDB.
 
-- **Frontend**: React-based UI with React Flow
-- **Backend**: FastAPI server with MongoDB support
+For detailed setup, development, and running instructions for each component, please refer to their respective README files:
 
-## Installation
+*   [Frontend README](./Frontend/README.md)
+*   [Backend README](./Backend/README.md)
 
-1. Clone the repository
-2. Install backend dependencies: `pip install -r Backend/requirements.txt`
-3. Install frontend dependencies: `cd Frontend && npm install`
-4. Start MongoDB locally
-5. Run the backend: `cd Backend && python main.py`
-6. Run the frontend: `cd Frontend && npm run dev`
+## Quick Start
+
+To get Albus up and running quickly, follow these general steps:
+
+1.  **Prerequisites:**
+    *   Node.js and npm (for the Frontend)
+    *   Python 3.8+ and pip (for the Backend)
+    *   MongoDB instance running (locally or accessible via URL)
+    *   OpenAI API Key
+
+2.  **Clone the Repository:**
+    ```bash
+    git clone <repository_url>
+    cd Albus  # Or your repository's root directory name
+    ```
+
+3.  **Setup & Run Backend:**
+    *   Navigate to the backend: `cd Backend`
+    *   Follow instructions in `Backend/README.md` (create virtual environment, install requirements, set up `.env` file with API keys and MongoDB URL).
+    *   Run the backend server: `uvicorn main:app --reload --port 8000` (from within the `Backend` directory).
+
+4.  **Setup & Run Frontend:**
+    *   Open a new terminal.
+    *   Navigate to the frontend: `cd Frontend`
+    *   Follow instructions in `Frontend/README.md` (install dependencies).
+    *   Run the frontend development server: `npm run dev`.
+    *   Open the URL provided by Vite (usually `http://localhost:5173`) in your browser.
+
+## Core Features
+
+*   **Visual Node-Based Workflow:** Intuitively design complex AI pipelines.
+*   **Modular AI Components:** Define and reuse different types of processing nodes (LLM calls, data retrieval, custom logic).
+*   **FastAPI Backend:** Robust and efficient server for managing and executing workflows.
+*   **React Frontend:** Modern and responsive user interface.
+*   **MongoDB Integration:** Persist your workflow designs and node configurations.
+*   **Real-time Interaction:** (Depending on specific frontend features) Immediate feedback during workflow construction.
 
 ## License
 

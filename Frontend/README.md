@@ -1,12 +1,61 @@
-# React + Vite
+# Albus Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the frontend application for Albus, a node-based AI workflow tool. It provides a user-friendly interface to create, connect, and manage AI processing nodes.
 
-Currently, two official plugins are available:
+## Technologies Used
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+*   **React**: For building the user interface.
+*   **Vite**: As the build tool and development server, providing a fast development experience.
+*   **React Flow**: For rendering and managing the interactive node graph.
+*   **JavaScript (ESM)**: With ESLint for code quality.
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1.  **Navigate to this directory**:
+    ```bash
+    cd Frontend
+    ```
+
+2.  **Install Dependencies**:
+    Ensure you have Node.js and npm installed. Then, run:
+    ```bash
+    npm install
+    ```
+    This will install all the necessary project dependencies defined in `package.json`.
+
+## Running the Development Server
+
+Once setup is complete, run the development server:
+
+```bash
+npm run dev
+```
+
+This will start the Vite development server, typically available at:
+*   **Local:** `http://localhost:5173` (or the next available port if 5173 is in use).
+
+The server supports Hot Module Replacement (HMR) for a fast development feedback loop.
+
+## Connecting to the Backend
+
+The frontend application is configured to connect to the backend API, which is expected to be running at `http://localhost:8000` by default. This URL is typically defined in service files like `src/services/api.js` or `src/services/NodeService.js`.
+
+Ensure the backend server is running for full application functionality.
+
+## Building for Production
+
+To create a production build of the frontend, run:
+
+```bash
+npm run build
+```
+
+This will generate optimized static assets in the `dist` directory, which can then be deployed to a static hosting service.
+
+## Linting
+
+To check for code quality and style issues, run:
+
+```bash
+npm run lint
+```
