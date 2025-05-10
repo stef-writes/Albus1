@@ -1,6 +1,6 @@
-# Albus - AI Workflow Orchestration Tool
+# Basic-LLM-Chain2 - AI Workflow Orchestration Tool
 
-Albus is a powerful, node-based AI workflow tool designed to help you create, visualize, and execute complex AI processing chains with a user-friendly interface. It allows for modular construction of AI tasks, making it easier to experiment with and deploy sophisticated AI pipelines.
+Basic-LLM-Chain2 is a powerful, node-based AI workflow tool designed to help you create, visualize, and execute complex AI processing chains with a user-friendly interface. It allows for modular construction of AI tasks, making it easier to experiment with and deploy sophisticated AI pipelines.
 
 ## Project Structure
 
@@ -16,7 +16,7 @@ For detailed setup, development, and running instructions for each component, pl
 
 ## Quick Start
 
-To get Albus up and running quickly, follow these general steps:
+To get Basic-LLM-Chain2 up and running quickly, follow these general steps:
 
 1.  **Prerequisites:**
     *   Node.js and npm (for the Frontend)
@@ -27,7 +27,7 @@ To get Albus up and running quickly, follow these general steps:
 2.  **Clone the Repository:**
     ```bash
     git clone <repository_url>
-    cd Albus  # Or your repository's root directory name
+    cd Basic-LLM-Chain2  # Or your repository's root directory name
     ```
 
 3.  **Setup & Run Backend:**
